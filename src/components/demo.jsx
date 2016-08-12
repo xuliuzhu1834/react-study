@@ -2,7 +2,7 @@ import React, {PropTypes}from "react";
 import {helloWorld,FUXX} from "../actions/actionDemo"
 
 
-export const View =({type,dispatch})=>(
+export default ({type, dispatch})=>(
     <div onMouseOver={()=>dispatch(helloWorld())}
         onMouseLeave={()=>dispatch(FUXX())}
     >
@@ -11,3 +11,4 @@ export const View =({type,dispatch})=>(
         <br/><hr/><hr/>
     </div>
 );
+
