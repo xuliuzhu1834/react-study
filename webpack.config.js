@@ -1,6 +1,7 @@
 /**
  * Created by brook on 16/8/11.
  */
+const webpack = require('webpack');
 module.exports = {
     entry: {
         app: './src/entry.jsx',
@@ -13,8 +14,17 @@ module.exports = {
         loaders: [
             {
                 test: /\.js(x$|$)/,
+                exclude: /node_modules/,
                 loaders: ['babel'],
             },
         ],
     },
+    // plugins: [
+    //     new webpack.optimize.UglifyJsPlugin({
+    //         minimize: true,
+    //         compress: {
+    //             warnings: false,
+    //         }
+    //     })
+    // ]
 };

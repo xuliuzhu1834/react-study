@@ -1,14 +1,17 @@
 import React from "react";
-import {render} from "react-dom";
 import {connect} from "react-redux";
 
-import Demo from "../components/demo.jsx";
+import Paper from 'material-ui/Paper';
+import {Toptoolbar} from  "../components/O-navigation.jsx"
 
 const Container = (props) => (
-    <div>
-        <Demo {...props}/>
-    </div>
+<Paper zDepth={2} >
+    <Toptoolbar {...props}/>
+        {/*{<Demo {...props}/>}*/}
+    </Paper>
 );
+
+
 
 const mapStateToProps = (state) => state;
 export default connect(mapStateToProps)(Container);
