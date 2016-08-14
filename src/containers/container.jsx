@@ -2,13 +2,18 @@ import React from "react";
 import {connect} from "react-redux";
 
 import Paper from 'material-ui/Paper';
-import {Toptoolbar} from  "../components/O-navigation.jsx"
+import {Toptoolbar,Classification} from  "../components/O-navigation.jsx"
 
 const Container = (props) => (
-<Paper zDepth={2} >
+<div >
+    <Paper zDepth={2} style={{padding:"20px"}}>
     <Toptoolbar {...props}/>
+        </Paper>
         {/*{<Demo {...props}/>}*/}
-    </Paper>
+    <div style={{marginTop:"20px"}}>
+    <Classification/>
+     </div>
+    </div>
 );
 
 
