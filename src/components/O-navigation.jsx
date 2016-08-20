@@ -1,133 +1,166 @@
-import React from "react";
-import {render} from "react-dom";
-import {Toolbar, ToolbarGroup} from 'material-ui/Toolbar';
-import MenuItem from 'material-ui/MenuItem';
-import RaisedButton from 'material-ui/RaisedButton';
-import SelectField from 'material-ui/SelectField';
-import DropDownMenu from "material-ui/DropDownMenu";
-import Paper from "material-ui/Paper";
-import Subheader from "material-ui/Subheader"
-import {List,ListItem} from "material-ui/List"
-import TextField from"material-ui/TextField"
-import  Divider from"material-ui/Divider"
-const style={
-  toolBar:{
-      backgroundColor:"#FFF",
-      // position:"fixed"
-  },
-    toolBar_select:{
-      border:"none"
-    }
-};
-export class Toptoolbar  extends React.Component {
-    constructor(props){
-        super(props);
-        this.state={
-            value:0,
-            menuId:"menu_1",
-        };
-    }
-    handleChange (event, index, value) {
-        console.log(value);
-        this.setState(Object.assign({},()=>state,{value}));
-    }
-    render() {
-        return (
-            <Toolbar style={style.toolBar}>
-                <ToolbarGroup firstChild={true} style={{width:"100%"}}>
-                    <DropDownMenu value={this.state.value}  onChange={(event, index, value)=>this.handleChange(event,index,value)}>
-                        <MenuItem value={0} primaryText="请配置站点"/>
-                        <MenuItem value={1} primaryText="SHEIN PC EN"/>
-                        <MenuItem value={2} primaryText="SHEIN PC DE"/>
-                        <MenuItem value={3} primaryText="SHEIN PC FR"/>
-                        <MenuItem value={4} primaryText="SHEIN PC ES"/>
+import React from 'react';
+// import {render} from 'react-dom'
 
-                    </DropDownMenu>
-                    <ToolbarGroup firstChild={true} style={{width:"70%"}}>
-                <SelectField menuId={this.state.menuId} underlineShow={false} style={{backgroundColor:"#fff"}}
-                             onChange={(event, index, value)=>this.handleChange(event,index,value)}>
-                    <MenuItem menuId={"menu_1"} primaryText="菜单一"/>
-                    <MenuItem menuId={"menu_2"} primaryText="菜单二 PC EN"/>
-                    <MenuItem menuId={"menu_3"} primaryText="菜单三 PC DE"/>
-                    <MenuItem menuId={"menu_4"} primaryText="菜单四 PC FR"/>
-                    <MenuItem menuId={"menu_5"} primaryText="菜单五 PC ES"/>
-                </SelectField>
-                    <RaisedButton label="修改名称" style={{maxWidth:"250px"}}></RaisedButton>
-                    <RaisedButton label="生效" primary={true} style={{maxWidth:"250px"}}></RaisedButton>
-                    <RaisedButton label="预览" disabled={true} style={{maxWidth:"250px"}}></RaisedButton>
-                    <RaisedButton label="删除" secondary={true} style={{maxWidth:"250px"}}></RaisedButton>
-                        </ToolbarGroup>
-                </ToolbarGroup>
-            </Toolbar>
-        )
-    }
-}
+import {
+  ToolbarGroup, MenuItem, SelectField,
+  DropDownMenu, Paper, TextField, Dialog,
+  FlatButton,
+} from 'material-ui';
+import Add from 'material-ui/svg-icons/content/add';
+import Create from 'material-ui/svg-icons/content/create';
+import { orange500 } from 'material-ui/styles/colors';
 
-export class Classification  extends React.Component{
-     loopList(count){
-        let items =[];
-        for (let i=0;i<count;i++){
-         items.push(
-                    <ListItem
-                        key={"hot-dress"+i}
-                        primaryText={"hot dress"+i}
+import * as types from '../constans/O-navigation-actiontypes';
+import { compeleData, onchangeMenus } from '../actions/O-navigation-action';
+
+
+export default class Toptoolbar extends React.Component {
+  componentWillMount() {
+    this.props.dispatch({ type: types.SHOW_WESITE });
+  }
+
+  handleChange(event, index, value) {
+    this.props.dispatch(compeleData('selected', value));
+    const rootData = this.props.revData;
+    rootData.map((item) => {
+      if (item.website === value) {
+        this.props.dispatch(onchangeMenus(item.menus));
+        this.props.dispatch(compeleData('revCates', item.cactes));
+      }
+    });
+  }
+
+  handleMenuChange(event, index, value) {
+    this.props.dispatch(compeleData('selectedMenu', value));
+  }
+
+  handleCompelete() {
+    // 生效按钮
+    console.log(`${this.props.selected} and ${this.props.selectedMenu}`);
+  }
+
+  handleOpenDialog(dialog, value) {
+    this.props.dispatch(compeleData(dialog, value));
+  }
+
+  handleEditName(value) {
+    this.handleOpenDialog('openEditDialog', false);
+  }
+
+  render() {
+    if (this.props.networkState === 2) {
+      return (
+        <Paper zDepth={0}>
+          <ToolbarGroup firstChild style={{ width: '100%' }}>
+            <DropDownMenu
+              value={this.props.selected}
+              onChange={(event, index, value) => this.handleChange(event, index, value)}
+            >
+              <MenuItem key={"0_请配置站点"} value="请配置站点" primaryText="请配置站点" />
+              {
+                this.props.revWebsites.map((item, i) =>
+                  <MenuItem key={`${i + 1}_${item}`} value={item} primaryText={item} />)
+              }
+
+
+            </DropDownMenu>
+            <ToolbarGroup firstChild style={{ width: '60%', marginLeft: '15%' }}>
+              <SelectField
+                value={this.props.selectedMenu} underlineShow
+                onChange={(event, index, value) => this.handleMenuChange(event, index, value)}
+              >
+                <MenuItem key={"0_选择编辑菜单"} value="选择编辑菜单" primaryText="选择编辑菜单" />
+                {
+                  this.props.revMenus.map((item, i) =>
+                    <MenuItem key={`${i + 1}_${item}`} value={item} primaryText={item} />
+                  )
+                }
+              </SelectField>
+
+              <div>
+                <FlatButton
+                  label="添加菜单" primary style={{ maxWidth: '250px' }} icon={<Add />}
+                  onClick={() => this.handleOpenDialog('openAddDialog', true)}
+                />
+                <Dialog
+                  title="添加菜单" id={'add_menu_dialog'}
+                  actions={[
+                    <FlatButton
+                      label="取消" primary
+                      onClick={() => this.handleOpenDialog('openAddDialog', false)}
                     />,
-                    <ListItem
-                        key={"sexy-dress" + i}
-                        primaryText={"sexy dress"+i}
-                    />
-        )
-        }
-        return items;
+                    <FlatButton
+                      label="确定" primary keyboardFocused
+                      onClick={() => this.handleOpenDialog('openAddDialog', false)}
+                    />,
+                  ]}
+                  modal={false}
+                  open={this.props.openAddDialog}
+                  onRequestClose={() => this.handleOpenDialog('openAddDialog', false)}
+                >
+                  <TextField
+                    id={'add_menu'} underlineStyle={{ orange500 }} fullWidth
+                    defaultValue={''}
+                  />
+                </Dialog>
+              </div>
+              <div>
+                <FlatButton
+                  label="修改名称" primary style={{ maxWidth: '250px' }}
+                  onClick={() => this.handleOpenDialog('openEditDialog', true)} icon={<Create />}
+                />
+                <Dialog
+                  title="修改菜单名称" id={'edit_menu_dialog'}
+                  actions={[
+                    <FlatButton
+                      label="取消" primary
+                      onClick={() => this.handleOpenDialog('openEditDialog', false)}
+                    />,
+                    <FlatButton
+                      label="确定" primary keyboardFocused
+                      onClick={() => this.handleEditName()}
+                    />]}
+                  modal={false}
+                  open={this.props.openEditDialog}
+                  onRequestClose={() => this.handleOpenDialog('openEditDialog', false)}
+                >
+                  <TextField
+                    id={this.props.selectedMenu} underlineStyle={{ orange500 }}
+                    defaultValue={this.props.selectedMenu} fullWidth
+                  />
+                </Dialog>
+              </div>
+              <div>
+                <FlatButton
+                  label="生效" primary
+                  style={{ maxWidth: '250px' }}
+                  onClick={() => this.handleCompelete()}
+                />
+              </div>
+              <div>
+                <FlatButton label="删除" secondary style={{ maxWidth: '250px' }} />
+              </div>
+              <div>
+                <FlatButton label="预览" disabled style={{ maxWidth: '250px' }} />
+              </div>
+
+            </ToolbarGroup>
+          </ToolbarGroup>
+        </Paper>
+      );
     }
-    render(){
-        return (
-            <div style={{width:"100%"}}>
-            <Paper zDepth={1} style={{width:"20%",float:"left"}}>
-
-                <List style={{width:"100%"}}>
-                <List >
-                    <Subheader>一级分类</Subheader>
-                    <Divider/>
-
-                    <ListItem key={"dress"} initiallyOpen={false} primaryTogglesNestedList={true} primaryText="Dress"
-                              nestedItems={this.loopList(10)}
-                    />
-                    <ListItem key={"shoes"} initiallyOpen={false} primaryTogglesNestedList={true} primaryText="shoes"
-                    />
-                    <ListItem key={"T-shirt"} initiallyOpen={false} primaryTogglesNestedList={true} primaryText="T-shirt"
-                    />
-                    <ListItem key={"x-shirt"} initiallyOpen={false} primaryTogglesNestedList={true} primaryText="x-shirt"/>
-                </List>
-                <RaisedButton label="配置到Menu" secondary={true}></RaisedButton>
-                </List>
-
-                <Divider style={{height:"15px",width:"100%"}}/>
-
-                <List style={{width:"100%",textAlign:"center"}}>
-                    <h3 >链接自定义</h3>
-                    <TextField
-                        hintText="请配置URL"
-                    /><br />
-                    <br/>
-                    <TextField  hintText="请配置链接名称"/>
-                    <br/>
-                        <br/>
-                    <RaisedButton label="配置到Menu" secondary={true}></RaisedButton>
-                </List>
-                <Divider style={{height:"15px",width:"100%"}}/>
-                <List style={{width:"100%",textAlign:"center"}}>
-                    <h3 >DAILY NEW</h3>
-                    <RaisedButton label="配置到Menu" secondary={true}></RaisedButton>
-                </List>
-
-            </Paper>
-                <Paper style={{width:"78%",height:"600px",float:"left",marginLeft:"2%"}}>
-
-                </Paper>
-
-            </div>
-
-            )
-    }
+    return null;
+  }
 }
+Toptoolbar.propTypes = {
+  dispatch: React.PropTypes.func.isRequired,
+  revData: React.PropTypes.array,
+  selected: React.PropTypes.string,
+  selectedMenu: React.PropTypes.string,
+  networkState: React.PropTypes.number,
+  revWebsites: React.PropTypes.array,
+  revMenus: React.PropTypes.array,
+  openAddDialog: React.PropTypes.bool,
+  openEditDialog: React.PropTypes.bool,
+};
+

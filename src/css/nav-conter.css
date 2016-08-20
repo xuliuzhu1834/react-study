@@ -1,0 +1,23 @@
+:local(.fileInput) {
+    position:absolute;right:10px;top:5px;z-index:100;width:150px;height:20px;line-height:20px;padding:10px 0; opacity: 0; cursor:pointer;
+}
+:local(.fileInputBg) {position:absolute;right:10px;top:5px;z-index:50;width:150px;height:40px;background-color: #333333;
+    border:none;color:#fff;line-height:40px; text-align:center; border-radius: 3px;
+}
+:local(.fileIcon) {
+    background-color: #E5E5E5;width:50px; height: 24px;  padding: 13px 0; text-align:center;vertical-align: top;display: inline-block;
+}
+:local(.bodyStyleBg) {overflow-y:auto !important; padding:10px 20px !important;}
+:local(.fileInputcon) { border:1px solid #E5E5E5; height:50px; margin-bottom:10px;position:relative; }
+
+:local(.categoryNamabg),:local(.fileInputurl) { width:100%; line-height:35px;box-sizing:border-box; margin-bottom:5px;
+    border:1px solid #E5E5E5; padding:0 10px; position:relative;}
+:local(.categoryNamabg) { padding:0;}
+:local(.categoryNama) { border:none;text-indent: 10px;line-height:35px;width:60% ;}
+:local(.categoryOriginal) { position: absolute;right:10px;top:0;}
+
+
+:local(.radioButton) { text-align:center;}
+:local(.navLeftconter) { text-align:left; max-height: 350px; overflow-y:auto; }
+
+:local(.fileInputurl),:local(.categoryNama)

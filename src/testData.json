@@ -1,0 +1,17 @@
+{
+  "name":[
+    {
+      "website":"shein-de",
+      "menus":["菜单一de","菜单二de","菜单三de","菜单四de"],
+      "cates":[
+        {"cate":"裙子","children":[{"cate":"鞋子"},{"cate":"鞋子-2"},{"cate":"鞋子-3"},{"cate":"鞋子-4"},{"cate":"鞋子-5"}]},
+        {"cate":"裙子-2"},
+        {"cate":"裙子-3"},
+        {"cate":"裙子-4"}
+      ]
+    },
+    {"website":"shein-fr","menus":["菜单一fr","菜单二fr","菜单三fr","菜单四fr"]},
+    {"website":"shein-es","menus":["菜单一es","菜单二es","菜单三es","菜单四es"]},
+    {"website":"shein-au","menus":["菜单一au","菜单二au","菜单三au","菜单四au"]}
+  ]
+}
