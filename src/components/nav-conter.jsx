@@ -106,14 +106,14 @@ export default class DialogExampleSimple extends React.Component {
         >
           <div className={style.categoryNamabg}>
             <input
-              type={'text'} className={style.categoryNama}
+              type='text' className={style.categoryNama}
               value={this.state.value} defaultValue={'dress'}
               onChange={(event) => this.handleinputChange(event)}
             />
             <span className={style.categoryOriginal}> 原始名称</span>
           </div>
           <input
-            type={'text'} className={style.fileInputurl}
+            type='text' className={style.fileInputurl}
             value={this.state.value}
             defaultValue={'http://www.shein.com/SheIn-Exclusives-vc-3305.html'}
             onChange={(event) => this.handleinputChange(event)}
@@ -121,17 +121,18 @@ export default class DialogExampleSimple extends React.Component {
           <div className={style.fileInputcon}>
             < IconButtonExampleSimple />
             <img
-              id={'portrait'} src={this.state.imgSrc} role={'presentation'} width={50} height={50}
+              id={'portrait'} src={this.state.imgSrc} role='presentation'
+              width={50} height={50}
               style={{ display: this.state.imgSrc ? 'inline-block' : 'none' }}
             />
             <bottom className={style.fileInputBg} type={'button'}>上传图片</bottom>
             <input
-              className={style.fileInput} type={'file'} name={'file'}
+              className={style.fileInput} type='file' name={'file'}
               onChange={(e) => this.showPreview(e.target)}
             />
           </div>
           <input
-            type={'text'} className={style.fileInputurl}
+            type='text' className={style.fileInputurl}
             value={this.state.value}
             defaultValue={'http://www.shein.com/SheIn-Exclusives-vc-3305.html'}
             onChange={(event) => this.handleinputChange(event)}
@@ -139,12 +140,12 @@ export default class DialogExampleSimple extends React.Component {
           <div className={style.fileInputcon}>
             < IconButtonExampleSimple />
             <img
-              id={'portrait'} src={this.state.imgSrc} role={'presentation'} width={50} height={50}
+              id={'portrait'} src={this.state.imgSrc} role='presentation' width={50} height={50}
               style={{ display: this.state.imgSrc ? 'inline-block' : 'none' }}
             />
             <bottom className={style.fileInputBg} type={'button'}>上传图片</bottom>
             <input
-              className={style.fileInput} type={'file'} name={'file'}
+              className={style.fileInput} type='file' name={'file'}
               onChange={(e) => this.showPreview(e.target)}
             />
           </div>

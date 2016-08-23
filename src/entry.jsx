@@ -9,13 +9,14 @@ import { Provider } from 'react-redux';
 import createSagaMiddleware from 'redux-saga';
 import rootSaga from './sagas/O-navigation-sagas';
 import rootReducer from './reducers/O-navigation-reducers';
-import Container from './containers/O.navigation.containers/O-navigation-models.jsx'
+import Container from './containers/O.navigation.containers/O-navigation-models.jsx';
 
 injectTapEventPlugin();
 const sagaMiddleware = createSagaMiddleware();
 
 const store = createStore(rootReducer, compose(
-  applyMiddleware(sagaMiddleware)
+  applyMiddleware(sagaMiddleware),
+  window.devToolsExtension && window.devToolsExtension()
 ));
 
 sagaMiddleware.run(rootSaga);

@@ -4,10 +4,12 @@
       "website":"shein-de",
       "menus":["菜单一de","菜单二de","菜单三de","菜单四de"],
       "cates":[
-        {"cate":"裙子","children":[{"cate":"鞋子"},{"cate":"鞋子-2"},{"cate":"鞋子-3"},{"cate":"鞋子-4"},{"cate":"鞋子-5"}]},
-        {"cate":"裙子-2"},
-        {"cate":"裙子-3"},
-        {"cate":"裙子-4"}
+        {"id":"dress1","cate":"裙子","children":[{"id":"shoes1","cate":"鞋子","children":[
+            {"id":"kuzi1","cate":"裤子"},{"id":"kuzi2","cate":"裤子-2"},{"id":"kuzi3","cate":"裤子-3"}]
+          },{"id":"shoes2","cate":"鞋子-2"},{"id":"shoes3","cate":"鞋子-3"},{"id":"shoes4","cate":"鞋子-4"},{"id":"shoes5","cate":"鞋子-5"}]},
+        {"id":"dress2","cate":"裙子-2"},
+        {"id":"dress3","cate":"裙子-3"},
+        {"id":"dress4","cate":"裙子-4"}
       ]
     },
     {"website":"shein-fr","menus":["菜单一fr","菜单二fr","菜单三fr","菜单四fr"]},

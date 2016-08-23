@@ -20,4 +20,7 @@
 :local(.radioButton) { text-align:center;}
 :local(.navLeftconter) { text-align:left; max-height: 350px; overflow-y:auto; }
 
-:local(.fileInputurl),:local(.categoryNama)
+/** navigationTable    **/
+:local(.tablePreviewBg) { padding:15px 10px 15px 20%; background-color: #fff; }
+:local(.tablePreview) { border:1px solid #000; margin:0 20px;}
+

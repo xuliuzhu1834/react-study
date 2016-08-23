@@ -1,11 +1,9 @@
 export const LOADED_WEBSITE = 'loaded_website';
 export const SHOW_WESITE = 'show_website'; // 显示所有站点
 export const SHOW_MENUS = 'show_menus';// 显示所有菜单
-export const UPDATE_MENUS_NAME = 'update_menus_name';// 修改菜单名称
-export const UPDATE_TO_NAVIGATION = 'update_to_navigation';// 生效
-export const SHOW_CATE = 'show_cate';
-
-export const DEL_MENU = 'del_menu';// 删除
+export const SELECT_ALL_CATES_TOGGLE = 'select_all_cates_toggle';// 全选
+export const ADD_SELECTED_ITEM = 'add_selected_item';
+export const REMOVE_SELECTED_ITEM = 'remove_selected_item';
+export const ADD_DESELECTED_ITEM = 'add_deselected_item';
+export const REMOVE_DESELECTED_ITEM = 'remove_deselected_item';
 export const COMPELETE = 'compelete';
-export const INITSTATE = 'initstate';
-export const CATE_CONF = 'cate_conf';

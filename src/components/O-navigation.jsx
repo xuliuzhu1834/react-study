@@ -1,10 +1,8 @@
 import React from 'react';
-// import {render} from 'react-dom'
-
 import {
   ToolbarGroup, MenuItem, SelectField,
   DropDownMenu, Paper, TextField, Dialog,
-  FlatButton,
+  FlatButton, CircularProgress,
 } from 'material-ui';
 import Add from 'material-ui/svg-icons/content/add';
 import Create from 'material-ui/svg-icons/content/create';
@@ -12,7 +10,6 @@ import { orange500 } from 'material-ui/styles/colors';
 
 import * as types from '../constans/O-navigation-actiontypes';
 import { compeleData, onchangeMenus } from '../actions/O-navigation-action';
-
 
 export default class Toptoolbar extends React.Component {
   componentWillMount() {
@@ -22,12 +19,9 @@ export default class Toptoolbar extends React.Component {
   handleChange(event, index, value) {
     this.props.dispatch(compeleData('selected', value));
     const rootData = this.props.revData;
-    rootData.map((item) => {
-      if (item.website === value) {
-        this.props.dispatch(onchangeMenus(item.menus));
-        this.props.dispatch(compeleData('revCates', item.cactes));
-      }
-    });
+    rootData.map((item) => (
+      item.website === value && this.props.dispatch(onchangeMenus(item.menus))
+    ));
   }
 
   handleMenuChange(event, index, value) {
@@ -42,11 +36,6 @@ export default class Toptoolbar extends React.Component {
   handleOpenDialog(dialog, value) {
     this.props.dispatch(compeleData(dialog, value));
   }
-
-  handleEditName(value) {
-    this.handleOpenDialog('openEditDialog', false);
-  }
-
   render() {
     if (this.props.networkState === 2) {
       return (
@@ -149,7 +138,11 @@ export default class Toptoolbar extends React.Component {
         </Paper>
       );
     }
-    return null;
+    return (
+      <div>
+        <CircularProgress />
+      </div>
+    );
   }
 }
 Toptoolbar.propTypes = {
