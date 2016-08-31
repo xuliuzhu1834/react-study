@@ -1,143 +1,125 @@
 import React from 'react';
-import {
+import
+{
   Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn,
-} from 'material-ui/Table';
+}
+from 'material-ui/Table';
+import DropDownMenu from 'material-ui/DropDownMenu';
+import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
-import style from '../css/nav-conter.css';
+import { fetchParams, compeleData } from '../actions/O-navigation-action';
+import { SHOW_CONFIG_ALL, EDIT_CONDIG_MENU_STATUS } from '../constans/O-navigation-actiontypes';
 
-const tableData = [
-  {
-    sites: 'shein-www',
-    position: 'header',
-    name: 'menu0',
-    status: '启用',
-    selected: true,
-  },
-  {
-    sites: 'shein-ar',
-    position: 'header',
-    name: 'menu1',
-    status: '停用',
-  },
-  {
-    sites: 'shein-au',
-    position: 'header',
-    name: 'menu2',
-    status: '启用',
-    selected: true,
-  },
-  {
-    sites: 'shein-de',
-    position: 'header',
-    name: 'menu3',
-    status: '停用',
-  },
-  {
-    sites: 'shein-fr',
-    position: 'header',
-    name: 'menu_春季',
-    status: '启用',
-  },
-  {
-    sites: 'shein-es',
-    position: 'header',
-    name: 'menu_秋季',
-    status: '停用',
-  },
-  {
-    sites: 'shein-us',
-    position: 'header',
-    name: 'menu_冬装',
-    status: '启用',
-  },
-];
-
+const configPosition = {
+  1: '顶部',
+  2: '底部',
+  4: '左侧边',
+  8: '右上角侧边',
+};
+const menuStatus = ['待发布', '预览', '发布', '不可操作'];
 export default class TableExampleComplex extends React.Component {
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      fixedHeader: true,
-      fixedFooter: true,
-      stripedRows: false,
-      showRowHover: false,
-      selectable: true,
-      multiSelectable: false,
-      enableSelectAll: false,
-      deselectOnClickaway: true,
-      showCheckboxes: true,
-      height: '300px',
-    };
+  static propTypes= {
+    dispatch: React.PropTypes.func,
+    configAll: React.PropTypes.object,
+    getMsg: React.PropTypes.object,
+    selectCates: React.PropTypes.object,
+  };
+  componentWillMount() {
+    let selected = this.props.getMsg.selectedSite;
+    if (this.props.getMsg.selectedSite === '请选择站点') {
+      selected = 'www';
+    }
+    this.props.dispatch(fetchParams(SHOW_CONFIG_ALL, selected));
   }
 
-  handleToggle = (event, toggled) => {
-    this.setState({
-      [event.target.name]: toggled,
-    });
-  };
-
-  handleChange = (event) => {
-    this.setState({ height: event.target.value });
-  };
-
-  statusToggle() {
-    alert(tableData.map.value);
+  handleChange(_, __, value) {
+    this.props.dispatch(compeleData('selectedSite', value));
+    this.props.dispatch(fetchParams(SHOW_CONFIG_ALL, value));
   }
 
+  handleChangeMenuStatus(menu) {
+    if (menu.menu_status >= '3') return;
+    let selected = this.props.getMsg.selectedSite;
+    if (this.props.getMsg.selectedSite === '请选择站点') {
+      selected = 'www';
+    }
+    this.props.dispatch(
+      fetchParams(EDIT_CONDIG_MENU_STATUS,
+        {
+          menu_id: menu.menu_id,
+          menu_name: menu.menu_name,
+          menu_status: parseInt(menu.menu_status, 10) + 1,
+          site_uid: selected,
+        }
+      ));
+  }
   render() {
-    return (
-      <div>
-        <Table
-          height={this.state.height}
-          fixedHeader={this.state.fixedHeader}
-          fixedFooter={this.state.fixedFooter}
-        >
-          <TableHeader >
-            <TableRow>
-              <TableHeaderColumn
-                colSpan="5"
-                style={{ textAlign: 'left', fontSize: 20, fontWeight: '700', color: '#000' }}
-              >
-                配置页面
-              </TableHeaderColumn>
-            </TableRow>
-            <TableRow>
-              <TableHeaderColumn >ID</TableHeaderColumn>
-              <TableHeaderColumn >站点</TableHeaderColumn>
-              <TableHeaderColumn >位置</TableHeaderColumn>
-              <TableHeaderColumn >菜单</TableHeaderColumn>
-              <TableHeaderColumn >状态</TableHeaderColumn>
-            </TableRow>
-          </TableHeader>
-          <TableBody
-            displayRowCheckbox={this.state.showCheckboxes}
-            deselectOnClickaway={this.state.deselectOnClickaway}
-            showRowHover={this.state.showRowHover}
-            stripedRows={this.state.stripedRows}
-          >
-            {tableData.map((row, index) => (
-              <TableRow key={index} selected={row.selected}>
-                <TableRowColumn>{index}</TableRowColumn>
-                <TableRowColumn>{row.sites}</TableRowColumn>
-                <TableRowColumn>{row.position}</TableRowColumn>
-                <TableRowColumn>{row.name}</TableRowColumn>
-                <TableRowColumn>
-                  <RaisedButton
-                    label={row.status}
-                    secondary
-                    onClick={() => this.statusToggle()}
-                  />
-                </TableRowColumn>
+    if (this.props.configAll.configAllDataState === 2) {
+      return (
+        <div>
+          <Table fixedHeader fixedFooter >
+            <TableHeader displaySelectAll={false} adjustForCheckbox={false} >
+              <TableRow>
+                <TableHeaderColumn
+                  colSpan="5"
+                  style={{ textAlign: 'left', fontSize: 20, fontWeight: '700', color: '#000' }}
+                >
+                  <DropDownMenu
+                    value={this.props.getMsg.selectedSite}
+                    onChange={(event, index, value) => this.handleChange(event, index, value)}
+                  >
+                    <MenuItem key={"0_请选择站点"} value="请选择站点" primaryText="请选择站点" />
+                    {
+                      this.props.selectCates.revData.map((item) =>
+                        <MenuItem
+                          key={item.site_uid} value={item.site_uid}
+                          primaryText={item.site_name}
+                        />)
+                    }
+                  </DropDownMenu>
+                </TableHeaderColumn>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <div className={style.tablePreviewBg}>
-          <RaisedButton label="预览" className={style.tablePreview} />
-          <RaisedButton label="生效" className={style.tablePreview} />
+              <TableRow>
+                <TableHeaderColumn >站点</TableHeaderColumn>
+                <TableHeaderColumn >位置</TableHeaderColumn>
+                <TableHeaderColumn >菜单</TableHeaderColumn>
+                <TableHeaderColumn >状态</TableHeaderColumn>
+                <TableHeaderColumn >操作</TableHeaderColumn>
+              </TableRow>
+            </TableHeader>
+            <TableBody
+              displayRowCheckbox={false}
+              showRowHover
+            >
+              {
+                this.props.configAll.configAllData.map(
+                  (row, index) => (
+                    <TableRow key={index}>
+                      <TableRowColumn>{row.site_name}</TableRowColumn>
+                      <TableRowColumn>
+                        {configPosition[row.position_id]}
+                      </TableRowColumn>
+                      <TableRowColumn>{row.menu_name}</TableRowColumn>
+                      <TableRowColumn>
+                        {menuStatus[parseInt(row.menu_status, 10) - 1]}
+                      </TableRowColumn>
+                      <TableRowColumn>
+                        <RaisedButton
+                          label={menuStatus[parseInt(row.menu_status, 10)] || '不可操作'}
+                          secondary
+                          disabled={row.dataLoading || parseInt(row.menu_status, 10) === 3}
+                          onClick={() => this.handleChangeMenuStatus(row)}
+                        />
+                      </TableRowColumn>
+                    </TableRow>
+                  )
+                )
+              }
+            </TableBody>
+          </Table>
         </div>
-      </div>
-    );
+      );
+    }
+    return null;
   }
 }

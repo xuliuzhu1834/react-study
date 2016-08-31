@@ -1,110 +1,112 @@
 import React from 'react';
 // import {render} from 'react-dom'
+import RaisedButton from 'material-ui/RaisedButton';
+import Paper from 'material-ui/Paper';
+import { List, ListItem } from 'material-ui/List';
+import Divider from 'material-ui/Divider';
+import Checkbox from 'material-ui/Checkbox';
+import isEqual from 'lodash/isEqual';
 import {
-  RaisedButton, Paper, Subheader, List, ListItem, TextField, Divider, Checkbox,
-  CircularProgress,
-} from 'material-ui';
-
-import {
-  childrenChecked, childrenCheckedCancel,
-  deselectWhenParentChecked, deselectWhenParentCheckedCalcel,
+  toggleChecked, addNomalCate,
 } from '../actions/O-navigation-action';
+import MenuDetails from './O-navigation-menus-details.jsx';
+import ClassfictionBottom from './O-navigation-classfiction-bottom.jsx';
 import css from '../css/nav-conter.css';
-// import MenusDetails from './O-navigation-menus-details.jsx';
 
+function filterChecked(arr = []) {
+  return arr.reduce((sum, item) => {
+    if (item.checked) {
+      return [...sum, Object.assign({}, item, {
+        id: `temp${new Date().valueOf()}${Math.random()}`,
+        category_children: filterChecked(item.category_children),
+      })];
+    }
+    return [...sum, ...filterChecked(item.category_children)];
+  }, []);
+}
+
+class OptListItem extends ListItem {
+  shouldComponentUpdate(nextProps, nextState) {
+    return !isEqual(nextProps['data-allProps'], this.props['data-allProps']) ||
+      !isEqual(nextState.open, this.state.open);
+  }
+}
 
 export default class Classification extends React.Component {
   static propTypes = {
     dispatch: React.PropTypes.func,
-    revCates: React.PropTypes.array,
-    childrenChecked: React.PropTypes.array,
-    revData: React.PropTypes.array,
-    selected: React.PropTypes.string,
-    networkState: React.PropTypes.number,
-    cancelCates: React.PropTypes.array,
-    allChecked: React.PropTypes.bool,
+    selectCates: React.PropTypes.object,
+    getMsg: React.PropTypes.object,
   };
 
-  loopList(count = [], parentChecked) {
-    return count.map((item) => {
-      const checkFlag = this.props.revCates.indexOf(item.id) > -1;
-      const unCheckFlag = this.props.cancelCates.indexOf(item.id) > -1;
-      const checked = parentChecked ? !unCheckFlag : checkFlag;
-      return (
-        <ListItem
-          key={item.cate} initiallyOpen={false}
-          primaryTogglesNestedList primaryText={item.cate}
-          leftCheckbox={
-            <Checkbox
-              checked={checked}
-              onCheck={(e, value) => {
-                if (parentChecked) {
-                  if (!value) return this.props.dispatch(deselectWhenParentChecked(item.id));
-                  return this.props.dispatch(deselectWhenParentCheckedCalcel(item.id));
-                }
-                if (value) return this.props.dispatch(childrenChecked(item.id));
-                return this.props.dispatch(childrenCheckedCancel(item.id));
-              }}
-            />
-          }
-          nestedItems={this.loopList(item.children, checked)}
-        />
-      );
-    });
+  loopList(count = []) {
+    return count.map((item) => (
+      <OptListItem
+        data-allProps={item}
+        key={item.category_id} primaryTogglesNestedList
+        initiallyOpen={false}
+        primaryText={item.category_title}
+        leftCheckbox={
+          <Checkbox
+            checked={item.checked || false}
+            onCheck={(_, value) => this.props.dispatch(toggleChecked(item.category_id, value))}
+          />
+        }
+        nestedItems={this.loopList(item.category_children)}
+      />
+      )
+    );
+  }
+  handleConfigToMenu() {
+    const { revCategorys } = this.props.getMsg;
+    this.props.dispatch(addNomalCate(filterChecked(revCategorys)));
   }
   renderListItem() {
-    const { allChecked, revData, selected } = this.props;
-    const cates = revData.find((item) =>
-      item.website === selected
-    ) || [];
-    return this.loopList(cates.cates, allChecked);
+    const { allChecked } = this.props.selectCates;
+    const { revCategorys } = this.props.getMsg;
+    return this.loopList(revCategorys, allChecked);
   }
 
   render() {
-    if (this.props.networkState === 2) {
+    if (this.props.getMsg.cateState === 2) {
       return (
         <div style={{ width: '100%' }}>
-          <Paper zDepth={1} style={{ width: '20%', float: 'left' }}>
+          <Paper zDepth={1} style={{ width: '20%', float: 'left', marginBottom: '20px' }}>
 
-            <List style={{ width: '100%', textAlign: 'center', padding: '20 0' }}>
-              <Subheader>一级分类</Subheader>
+            <List style={{ width: '100%', textAlign: 'center', padding: '20px 0' }}>
               <Divider />
               <List className={css.navLeftconter}>
-                {
-                  this.renderListItem()
-                }
+                {this.renderListItem()}
               </List>
-              <RaisedButton label="配置到Menu" primary />
-            </List>
-
-            <Divider style={{ height: '15px', width: '100%' }} />
-
-            <List style={{ width: '100%', textAlign: 'center' }}>
-              <h3 >链接自定义</h3>
-              <TextField
-                hintText="请配置URL"
-              /><br />
-              <br />
-              <TextField hintText="请配置链接名称" />
-              <br />
-              <br />
-              <RaisedButton label="配置到Menu" primary />
+              <RaisedButton
+                label="配置到Menu" primary
+                onClick={() => this.handleConfigToMenu()}
+              />
             </List>
             <Divider style={{ height: '15px', width: '100%' }} />
-            <List style={{ width: '100%', textAlign: 'center' }}>
-              <h3 >DAILY NEW</h3>
-              <RaisedButton label="配置到Menu" primary />
-            </List>
-
+            <ClassfictionBottom {...this.props} />
           </Paper>
-          {/* <MenusDetails /> */}
+          <div style={{ width: '78%', float: 'right' }}>
+            <MenuDetails {...this.props} />
+          </div>
         </div>
 
       );
     }
     return (
       <div>
-        <CircularProgress />
+        <Paper zDepth={1} style={{ width: '20%', float: 'left' }}>
+
+          <List style={{ width: '100%', textAlign: 'center', padding: '20 0' }}>
+            <Divider />
+
+            <RaisedButton label="配置到Menu" primary />
+          </List>
+          <ClassfictionBottom {...this.props} />
+        </Paper>
+        <div style={{ width: '70%', float: 'right' }}>
+          <MenuDetails {...this.props} />
+        </div>
       </div>
     );
   }

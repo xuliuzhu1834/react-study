@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
-import ImageAddToPhotos from 'material-ui/svg-icons/image/add-to-photos';
-
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
+
+import { fetchParams, compeleCateData, msgDataChange } from '../actions/O-navigation-action';
+import {
+  EDIT_EVERY_CATE, CATE_IMG_UPLOAD, DEL_EVERY_CATE,
+} from '../constans/O-navigation-actiontypes';
+
 import style from '../css/nav-conter.css';
 
 const styles = {
@@ -17,142 +20,149 @@ const styles = {
     marginRight: 0,
   },
 };
-const RadioButtonExampleSimple = () => (
-  <RadioButtonGroup
-    name={'shipSpeed'}
-    defaultSelected={'not_light'}
-    className={style.radioButton}
-  >
-    <RadioButton
-      value={'light'}
-      label={'黑色'}
-      style={styles.radioButton}
-      inputStyle={styles.radioInput}
-    />
-    <RadioButton
-      value={'not_light'}
-      label={'红色'}
-      style={styles.radioButton}
-    />
-  </RadioButtonGroup>
-);
 
-const IconButtonExampleSimple = () => (
-  <div className={style.fileIcon}>
-    <ImageAddToPhotos />
-  </div>
-);
+const DialogExampleSimple = (props) => {
+  const {
+    dispatch,
+  } = props;
+  if (!props.open) return null;
+  const actions = [
+    <FlatButton
+      label={'删除菜单'}
+      primary
+      onTouchTap={() => {
+        dispatch({
+          type: DEL_EVERY_CATE,
+          id: props.items.id,
+        });
+        dispatch(compeleCateData('open', false));
+      }}
+    />,
+    <FlatButton
+      label={'确定'}
+      primary
+      keyboardFocused
+      onTouchTap={() => {
+        if (props.nameValue === '') return;
+        dispatch({
+          type: EDIT_EVERY_CATE,
+          data: {
+            category_title: props.nameValue,
+            category_color: props.color,
+            category_image: props.imageMsgs,
+          },
+          id: props.items.id,
+        });
+        dispatch(compeleCateData('open', false));
+      }}
+    />,
+    <FlatButton
+      label={'取消'}
+      primary
+      onTouchTap={() => dispatch(compeleCateData('open', false))}
+    />,
+  ];
 
-export default class DialogExampleSimple extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { open: false, imgSrc: '' };
-  }
-
-  handleOpen() {
-    this.setState({ open: true });
-  }
-
-  handleClose() {
-    this.setState({ open: false });
-  }
-
-  showPreview(source) {
+  const showPreview = (source, index) => {
     const file = source.files[0];
+    if (!file) return;
     if (window.FileReader) {
       const fr = new FileReader();
       fr.onloadend = (e) => {
-        this.setState({
-          imgSrc: e.target.result,
-        });
+        dispatch(fetchParams(CATE_IMG_UPLOAD, {
+          thumb: e.target.result,
+          index,
+        }));
       };
       fr.readAsDataURL(file);
     }
-  }
-
-  handleinputChange(event) {
-    this.setState({ value: event.target.value });
-  }
-
-  render() {
-    const actions = [
-      <FlatButton
-        label={'删除菜单'}
-        primary
-        onTouchTap={() => this.handleClose()}
-      />,
-      <FlatButton
-        label={'确定'}
-        primary
-        keyboardFocused
-        onTouchTap={() => this.handleClose()}
-      />,
-      <FlatButton
-        label={'取消'}
-        primary
-        onTouchTap={() => this.handleClose()}
-      />,
-    ];
-
-    return (
-      <div style={{ position: 'absolute', right: 10, top: 5 }}>
-        <RaisedButton label={'编辑'} onTouchTap={() => this.handleOpen()} />
-        <Dialog
-          actions={actions}
-          modal={false}
-          open={this.state.open}
-          onRequestClose={() => this.handleClose()}
-          bodyClassName={style.bodyStyleBg}
+  };
+  return (
+    <div className={style.oneCategoryEditBg}>
+      <Dialog
+        actions={actions}
+        modal
+        open={props.open}
+        onRequestClose={() => dispatch(compeleCateData('open', false))}
+        bodyClassName={style.bodyStyleBg}
+      >
+        <div className={style.categoryNamabg}>
+          <input
+            type="text" className={style.categoryNama}
+            value={props.nameValue}
+            placeholder={props.items.category_title}
+            onChange={(e) => dispatch(compeleCateData('nameValue', e.target.value))}
+          />
+          <span className={style.categoryOriginal}>
+              原始名称:{props.items.category_raw_title}
+          </span>
+        </div>
+        <div>
+          {
+            props.level === 1 ? Array(2).fill(0).map((_, index) => (
+              <div className={style.fileInputcon} key={index}>
+                <div className={style.fileInputleft}>
+                  {
+                    props.imageMsgs[index].target ? <img
+                      src={props.imageMsgs[index].target} role="presentation"
+                      height={200}
+                    /> : null
+                  }
+                </div>
+                <input
+                  type="text" className={style.fileInputurl}
+                  value={props.imageMsgs[index].imgUrl}
+                  onChange={(event) =>
+                    dispatch(msgDataChange(index, 'imgUrl', event.target.value))}
+                  placeholder={'图片链接'}
+                />
+                <input
+                  type="text" className={style.fileImgAlt}
+                  value={props.imageMsgs[index].alt}
+                  onChange={(event) =>
+                    dispatch(msgDataChange(index, 'alt', event.target.value))}
+                  placeholder={'图片描述'}
+                />
+                <bottom className={style.fileInputBg} type={'button'}>上传图片</bottom>
+                <input
+                  className={style.fileInput} type="file" name={'file'}
+                  onChange={(e) => showPreview(e.target, index)}
+                />
+              </div>
+            )) : null
+          }
+        </div>
+        <RadioButtonGroup
+          name={'shipSpeed'}
+          defaultSelected={'1'}
+          className={style.radioButton}
+          onChange={(e, value) => dispatch(compeleCateData('color', value))}
         >
-          <div className={style.categoryNamabg}>
-            <input
-              type='text' className={style.categoryNama}
-              value={this.state.value} defaultValue={'dress'}
-              onChange={(event) => this.handleinputChange(event)}
-            />
-            <span className={style.categoryOriginal}> 原始名称</span>
-          </div>
-          <input
-            type='text' className={style.fileInputurl}
-            value={this.state.value}
-            defaultValue={'http://www.shein.com/SheIn-Exclusives-vc-3305.html'}
-            onChange={(event) => this.handleinputChange(event)}
+          <RadioButton
+            value={'1'}
+            label={'黑色'}
+            style={styles.radioButton}
+            inputStyle={styles.radioInput}
           />
-          <div className={style.fileInputcon}>
-            < IconButtonExampleSimple />
-            <img
-              id={'portrait'} src={this.state.imgSrc} role='presentation'
-              width={50} height={50}
-              style={{ display: this.state.imgSrc ? 'inline-block' : 'none' }}
-            />
-            <bottom className={style.fileInputBg} type={'button'}>上传图片</bottom>
-            <input
-              className={style.fileInput} type='file' name={'file'}
-              onChange={(e) => this.showPreview(e.target)}
-            />
-          </div>
-          <input
-            type='text' className={style.fileInputurl}
-            value={this.state.value}
-            defaultValue={'http://www.shein.com/SheIn-Exclusives-vc-3305.html'}
-            onChange={(event) => this.handleinputChange(event)}
+          <RadioButton
+            value={'2'}
+            label={'红色'}
+            style={styles.radioButton}
           />
-          <div className={style.fileInputcon}>
-            < IconButtonExampleSimple />
-            <img
-              id={'portrait'} src={this.state.imgSrc} role='presentation' width={50} height={50}
-              style={{ display: this.state.imgSrc ? 'inline-block' : 'none' }}
-            />
-            <bottom className={style.fileInputBg} type={'button'}>上传图片</bottom>
-            <input
-              className={style.fileInput} type='file' name={'file'}
-              onChange={(e) => this.showPreview(e.target)}
-            />
-          </div>
-          < RadioButtonExampleSimple />
+        </RadioButtonGroup>
+      </Dialog>
+    </div>
+  );
+};
 
-        </Dialog>
-      </div>
-    );
-  }
-}
+DialogExampleSimple.propTypes = {
+  level: PropTypes.number,
+  dispatch: PropTypes.func,
+  items: PropTypes.object,
+  open: PropTypes.bool,
+  nameValue: PropTypes.string,
+  imageMsgs: React.PropTypes.array,
+};
+
+export default DialogExampleSimple;
+

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { RaisedButton, Paper } from 'material-ui';
+import RaisedButton from 'material-ui/RaisedButton';
+import Paper from 'material-ui/Paper';
 
-const style = {
-  margin: 12,
-};
+import style from '../css/nav-conter.css';
+
 export default class NavigationEditToggle extends Component {
   showPreview() {
     document.getElementById('navigationEdit').style.display = 'none';
@@ -16,14 +16,14 @@ export default class NavigationEditToggle extends Component {
   }
   render() {
     return (
-      <Paper zDepth={5}>
+      <Paper zDepth={5} className={style.tablePreviewBg}>
         <RaisedButton
-          style={style}
+          secondary className={style.tablePreview}
           label="配置页面"
           onClick={() => this.showPreview()}
         />
         <RaisedButton
-          style={style}
+          primary className={style.tablePreview}
           label="编辑菜单"
           onClick={() => this.showPreview2()}
         />
